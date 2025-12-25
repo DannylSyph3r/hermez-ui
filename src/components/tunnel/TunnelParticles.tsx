@@ -15,55 +15,64 @@ interface TunnelParticlesProps {
     radius?: number
     length?: number
     count?: number // size * size
+    noiseScale?: number
+    noiseIntensity?: number
+    timeScale?: number
+    focus?: number
+    aperture?: number
+    fov?: number
 }
 
 export function TunnelParticles({
-    speed = 1.0,
+    speed = 0.5,
     radius = 5.0,
-    length = 40.0,
-    count = 512
+    length = 20.0,
+    count = 512,
+    // Geometric Spiral Props
+    noiseScale = 0.5,
+    noiseIntensity = 0.1, // Almost zero noise to keep lines sharp (Geometric)
+    timeScale = 0.1,
+    focus = 5.5,
+    aperture = 0.4,       // Less blur to show off the structure
+    fov = 60
 }: TunnelParticlesProps) {
-    const size = count // Texture dimensions (size x size)
+    const size = count
 
     // 1. Setup Simulation Material
     const simulationMaterial = useMemo(() => {
         return new TunnelSimulationMaterial(radius, length)
     }, [radius, length])
 
-    // 2. Setup FBO (Frame Buffer Object) to store particle positions
-    // This is our "GPU Memory" for positions
+    // 2. Setup FBO
     const target = useFBO(size, size, {
         minFilter: THREE.NearestFilter,
         magFilter: THREE.NearestFilter,
         format: THREE.RGBAFormat,
-        type: THREE.FloatType, // vital for precision
+        type: THREE.FloatType,
     })
 
     // 3. Setup Render Material (reads from FBO)
     const renderMaterial = useMemo(() => {
         const m = new TunnelPointMaterial()
         m.uniforms.positions.value = target.texture
+        // Link initial positions for stable sparkle noise
+        m.uniforms.initialPositions.value = simulationMaterial.uniforms.positions.value
         return m
-    }, []) // Depend on target only via ref, but texture object is stable
+    }, [simulationMaterial])
 
     // 4. Setup Off-screen Scene/Camera for Simulation
     const [scene] = useState(() => new THREE.Scene())
     const [camera] = useState(() => new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1))
 
-    // A simple quad to render the simulation shader onto the FBO
+    // A simple quad
     const [quadPositions] = useState(() => new Float32Array([-1, -1, 0, 1, -1, 0, 1, 1, 0, -1, -1, 0, 1, 1, 0, -1, 1, 0]))
     const [quadUvs] = useState(() => new Float32Array([0, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 1]))
 
-    // 5. Generate Particles Geometry (just points with IDs/UVs)
+    // 5. Generate Particles Geometry
     const particles = useMemo(() => {
         const length = size * size
         const data = new Float32Array(length * 3)
         for (let i = 0; i < length; i++) {
-            // We don't actually need positions here as they are read from texture
-            // But we can store UV reference to look up the texture
-            // Actually, we usually pass UVs via attribute or just compute in vertex shader
-            // Let's pass simple indices or rely on gl_VertexID (if supported) or just UVs.
-            // Standard way:
             data[i * 3 + 0] = (i % size) / size
             data[i * 3 + 1] = Math.floor(i / size) / size
             data[i * 3 + 2] = 0
@@ -79,6 +88,9 @@ export function TunnelParticles({
         simulationMaterial.uniforms.uTime.value = clock.elapsedTime
         simulationMaterial.uniforms.uSpeed.value = speed
         simulationMaterial.uniforms.uTunnelLength.value = length
+        simulationMaterial.uniforms.uNoiseScale.value = noiseScale
+        simulationMaterial.uniforms.uNoiseIntensity.value = noiseIntensity
+        simulationMaterial.uniforms.uTimeScale.value = timeScale
 
         // Render Simulation to FBO
         gl.setRenderTarget(target)
@@ -89,11 +101,14 @@ export function TunnelParticles({
         // Update Render Uniforms
         renderMaterial.uniforms.uTime.value = clock.elapsedTime
         renderMaterial.uniforms.positions.value = target.texture
+        renderMaterial.uniforms.uFocus.value = focus
+        renderMaterial.uniforms.uBlur.value = aperture
+        renderMaterial.uniforms.uFov.value = fov
     })
 
     return (
         <>
-            {/* Simulation Pass (Off-screen) */}
+            {/* Simulation Pass */}
             {createPortal(
                 <mesh>
                     <bufferGeometry>
@@ -106,12 +121,9 @@ export function TunnelParticles({
                 scene
             )}
 
-            {/* Render Pass (On-screen) */}
+            {/* Render Pass */}
             <points>
                 <bufferGeometry>
-                    {/* We use the UVs calculated in particles useMemo as 'position' attribute 
-              so vertex shader can look up the FBO. 
-              The actual world position is set in vertex shader from the texture. */}
                     <bufferAttribute attach="attributes-position" args={[particles, 3]} />
                 </bufferGeometry>
                 {/* @ts-ignore */}

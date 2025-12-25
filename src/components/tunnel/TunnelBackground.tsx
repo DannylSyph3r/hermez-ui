@@ -17,7 +17,7 @@ export default function TunnelBackground() {
 
                 <Suspense fallback={null}>
                     <TunnelParticles
-                        count={256} // 256x256 = 65k particles (Start conservative)
+                        count={1024} // 1024x1024 = 1M particles for high density "Black Hole" accretion
                         speed={1.5}
                         radius={2.0}
                         length={15.0} // Tunnel length

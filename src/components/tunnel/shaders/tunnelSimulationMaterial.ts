@@ -1,25 +1,48 @@
 import * as THREE from 'three'
 import { periodicNoiseGLSL } from './utils'
 
-// Function to generate particles on a cylinder
+// Function to generate particles in structured Spiral Arms
 function getCylinder(count: number, components: number, size: number = 512, radius: number = 5.0, length: number = 20.0) {
   const totallength = count * components
   const data = new Float32Array(totallength)
 
+  // Configuration for Spiral Arms
+  const numArms = 5; // Distinct arms
+  const armWidth = 0.3; // Width of each arm (0 to 1, where 1 is touching neighbors)
+  const spiralTwist = 2.0; // How many full rotations along the length
+
   for (let i = 0; i < count; i++) {
     const i4 = i * components
 
-    // Random angle for cylinder mapping
-    const theta = Math.random() * Math.PI * 2
-
-    // Position along the length (Z-axis), distributed from -length to 0
-    // We want them to spawn ahead and fly towards camera (or vice versa)
-    // Let's spawn them along the whole tunnel initially
+    // 1. Z Position (Depth)
+    // Distributed randomly along length
     const z = (Math.random() * length) - length // -20 to 0
 
-    // X and Y based on radius and angle
-    const x = Math.cos(theta) * radius
-    const y = Math.sin(theta) * radius
+    // 2. Angle (Spiral Logic)
+    // Determine which arm this particle belongs to
+    const armIndex = Math.floor(Math.random() * numArms);
+    // Base angle for this arm
+    const armBaseAngle = (armIndex / numArms) * Math.PI * 2;
+
+    // Twist based on Z: The spiral rotates as we go deeper
+    // Normalize Z (-length to 0) to 0..1
+    const zNorm = Math.abs(z) / length;
+    const twistOffset = zNorm * Math.PI * 2 * spiralTwist;
+
+    // Spread within the arm (Gaps!)
+    // Random offset within the allowed arm width
+    const armSpread = (Math.random() - 0.5) * (Math.PI * 2 / numArms) * armWidth;
+
+    const theta = armBaseAngle + twistOffset + armSpread;
+
+    // 3. Radius (Tube Thickness)
+    // Keep it relatively tight to form clean lines, but with slight variation for volume
+    // The reference image has thick defined paths.
+    const r = radius * (0.9 + Math.random() * 0.2);
+
+    // Convert to Cartesian
+    const x = Math.cos(theta) * r
+    const y = Math.sin(theta) * r
 
     // Store positions
     data[i4 + 0] = x
@@ -50,46 +73,71 @@ export class TunnelSimulationMaterial extends THREE.ShaderMaterial {
         uniform float uTime;
         uniform float uSpeed;
         uniform float uTunnelLength;
+        // Skkall noise params
+        uniform float uNoiseScale;
+        uniform float uNoiseIntensity;
+        uniform float uTimeScale;
+        
         varying vec2 vUv;
 
         ${periodicNoiseGLSL}
 
         void main() {
-          vec3 pos = texture2D(positions, vUv).rgb;
+          vec3 originalPos = texture2D(positions, vUv).rgb;
 
-          // 1. Move along Z axis (towards camera which is at +Z or 0)
-          // We assume camera looks down -Z, so particles move +Z to fly past?
-          // Let's say particles flow towards +Z (camera at 0, looking at -Z)
-          // Actually, let's have them flow towards +Z.
-          pos.z += uSpeed * 0.1;
-
-          // 2. Loop logic
-          // If particle passes the camera (z > 2.0), respawn at end of tunnel (-uTunnelLength)
-          if (pos.z > 2.0) {
-             pos.z -= uTunnelLength;
-          }
-
-          // 3. Spiral / Rotation effect
-          // Rotate XY around Z axis based on speed
-          float angle = uSpeed * 0.01;
-          float c = cos(angle);
-          float s = sin(angle);
-          mat2 rotation = mat2(c, -s, s, c);
-          pos.xy = rotation * pos.xy;
+          // 1. Continuous Flow along Z (Tunnel Effect)
+          // Speed up slightly for the "warp speed" feel of the reference
+          float zFlow = uTime * uSpeed * 6.0; 
+          float currentZ = originalPos.z + zFlow;
           
-          // 4. Noise displacement for organic feel
-          float noise = periodicNoise(pos, uTime * 0.5);
-          pos.x += noise * 0.02;
-          pos.y += noise * 0.02;
+          float zRange = uTunnelLength; // Match length exactly for seamless loops if the geometry is periodic?
+          // Our geometry twist is based on Z. If we wrap Z, we must ensure the twist matches at boundaries.
+          // Or we just let it flow. The random scatter along Z helps hide seams.
+          
+          // Wrap with buffer
+          float zBuffer = 2.0;
+          float wrapHeight = uTunnelLength + zBuffer;
+          
+          float zOffset = currentZ + uTunnelLength; 
+          float zWrapped = mod(zOffset, wrapHeight);
+          float finalZ = zWrapped - uTunnelLength;
+          
+          vec3 flowingPos = vec3(originalPos.x, originalPos.y, finalZ);
 
-          gl_FragColor = vec4(pos, 1.0);
+          // 2. Rotation
+          // Rotate the entire tunnel for dynamic feel (separate from the static spiral geometry)
+          float globalRot = uTime * 0.5;
+          float c = cos(globalRot);
+          float s = sin(globalRot);
+          mat2 rotation = mat2(c, -s, s, c);
+          flowingPos.xy = rotation * flowingPos.xy;
+
+          // 3. Skkall Noise (Subtle)
+          // Just enough to make it "alive", but not enough to break the spiral lines
+          float noiseTime = uTime * uTimeScale;
+          vec3 noiseInput = flowingPos * uNoiseScale;
+          
+          float displacementX = periodicNoise(noiseInput + vec3(0.0), noiseTime);
+          float displacementY = periodicNoise(noiseInput + vec3(50.0, 0.0, 0.0), noiseTime + 2.094);
+          float displacementZ = periodicNoise(noiseInput + vec3(0.0, 50.0, 0.0), noiseTime + 4.188);
+          
+          // Significantly reduced intensity to preserve the geometric "Gaps"
+          vec3 distortion = vec3(displacementX, displacementY, displacementZ) * uNoiseIntensity;
+          
+          vec3 finalPos = flowingPos + distortion;
+
+          gl_FragColor = vec4(finalPos, 1.0);
         }
       `,
       uniforms: {
         positions: { value: positionsTexture },
         uTime: { value: 0 },
         uSpeed: { value: 1.0 },
-        uTunnelLength: { value: length }
+        uTunnelLength: { value: length },
+        // New Skkall uniforms
+        uNoiseScale: { value: 0.5 },
+        uNoiseIntensity: { value: 0.2 }, // Reduced from 0.5 to keep lines clean
+        uTimeScale: { value: 1.0 }
       }
     })
   }
