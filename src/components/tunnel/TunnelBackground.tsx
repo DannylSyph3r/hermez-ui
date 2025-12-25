@@ -24,7 +24,7 @@ export default function TunnelBackground() {
                     />
                 </Suspense>
 
-                <EffectComposer disableNormalPass>
+                <EffectComposer enableNormalPass={false}>
                     {/* Add Bloom for that "Pulse" energy feel */}
                     <Bloom
                         luminanceThreshold={0.2}
