@@ -5,21 +5,21 @@ import { periodicNoiseGLSL } from './utils'
 function getPlane(count: number, components: number, size: number = 512, scale: number = 1.0) {
   const length = count * components
   const data = new Float32Array(length)
-  
+
   for (let i = 0; i < count; i++) {
     const i4 = i * components
-    
+
     // Calculate grid position
     const x = (i % size) / (size - 1) // Normalize to [0, 1]
     const z = Math.floor(i / size) / (size - 1) // Normalize to [0, 1]
-    
+
     // Convert to centered coordinates [-0.5, 0.5] and apply scale
     data[i4 + 0] = (x - 0.5) * 2 * scale // X position: scaled range
     data[i4 + 1] = 0 // Y position: flat plane at y=0
     data[i4 + 2] = (z - 0.5) * 2 * scale // Z position: scaled range
     data[i4 + 3] = 1.0 // W component (for RGBA texture)
   }
-  
+
   return data
 }
 
@@ -40,29 +40,61 @@ void main() {
       uniform float uNoiseIntensity;
       uniform float uTimeScale;
       uniform float uLoopPeriod;
+      uniform float uSpiralStrength;
+      uniform float uPulseSpeed;
+      uniform float uPulseAmount;
       varying vec2 vUv;
 
-      ${ periodicNoiseGLSL }
+      ${periodicNoiseGLSL}
 
 void main() {
         // Get the original particle position
         vec3 originalPos = texture2D(positions, vUv).rgb;
 
-        // Use continuous time that naturally loops through sine/cosine periodicity
+        // Use continuous time for animation
         float continuousTime = uTime * uTimeScale * (6.28318530718 / uLoopPeriod);
-        // float continuousTime = 0.0;
 
-        // Scale position for noise input
+        // ============================================
+        // VORTEX EFFECT: Polar coordinate rotation
+        // ALL particles rotate around center
+        // Inner particles rotate FASTER (like a whirlpool/drain)
+        // ============================================
+        
+        // Convert to polar coordinates
+        vec2 xzPos = originalPos.xz;
+        float r = length(xzPos);           // Distance from center
+        float theta = atan(xzPos.y, xzPos.x);  // Current angle
+        
+        // Rotation speed inversely proportional to distance
+        // Inner particles spin faster, outer particles spin slower
+        // The "+ 0.3" prevents infinite speed at center
+        float baseRotationSpeed = uSpiralStrength / (r * 0.5 + 0.3);
+        
+        // Add pulsing/breathing effect to rotation speed
+        float pulseMultiplier = 1.0 + sin(continuousTime * uPulseSpeed) * uPulseAmount;
+        float rotationSpeed = baseRotationSpeed * pulseMultiplier;
+        
+        // Continuously rotate the angle over time
+        // This makes ALL particles spin around the center
+        float newTheta = theta + continuousTime * rotationSpeed;
+        
+        // Convert back to Cartesian coordinates
+        // This is the rotated position
+        vec2 rotatedXZ = vec2(r * cos(newTheta), r * sin(newTheta));
+        
+        // ============================================
+        // Add organic wave motion (keep the flowing feel)
+        // ============================================
         vec3 noiseInput = originalPos * uNoiseScale;
-
-        // Generate periodic displacement for each axis using different phase offsets
-        float displacementX = periodicNoise(noiseInput + vec3(0.0, 0.0, 0.0), continuousTime);
-        float displacementY = periodicNoise(noiseInput + vec3(50.0, 0.0, 0.0), continuousTime + 2.094); // +120°
-        float displacementZ = periodicNoise(noiseInput + vec3(0.0, 50.0, 0.0), continuousTime + 4.188); // +240°
-
-        // Apply distortion to original position
-        vec3 distortion = vec3(displacementX, displacementY, displacementZ) * uNoiseIntensity;
-        vec3 finalPos = originalPos + distortion;
+        float noiseY = periodicNoise(noiseInput, continuousTime) * uNoiseIntensity * 0.4;
+        float noiseXZ = periodicNoise(noiseInput + vec3(25.0, 0.0, 0.0), continuousTime) * uNoiseIntensity * 0.15;
+        
+        // Combine vortex rotation with organic wave noise
+        vec3 finalPos = vec3(
+          rotatedXZ.x + noiseXZ,
+          originalPos.y + noiseY,
+          rotatedXZ.y + noiseXZ
+        );
 
   gl_FragColor = vec4(finalPos, 1.0);
 } `,
@@ -72,8 +104,12 @@ void main() {
         uNoiseScale: { value: 1.0 },
         uNoiseIntensity: { value: 0.5 },
         uTimeScale: { value: 1 },
-        uLoopPeriod: { value: 24.0 }
+        uLoopPeriod: { value: 24.0 },
+        uSpiralStrength: { value: 0.5 },  // Controls rotation speed
+        uPulseSpeed: { value: 0.8 },       // Breathing frequency
+        uPulseAmount: { value: 0.15 }      // Breathing intensity
       }
     })
   }
 }
+

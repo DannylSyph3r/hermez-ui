@@ -26,6 +26,11 @@ interface TunnelParticlesProps {
     useManualTime?: boolean
     manualTime?: number
     introspect?: boolean
+    // Vortex effect parameters
+    spiralStrength?: number
+    pulseSpeed?: number
+    pulseAmount?: number
+    centerFadeRadius?: number
 }
 
 export function TunnelParticles({
@@ -42,7 +47,12 @@ export function TunnelParticles({
     planeScale = 10.0,
     useManualTime = false,
     manualTime = 0,
-    introspect = false
+    introspect = false,
+    // Vortex effect defaults
+    spiralStrength = 0.5,
+    pulseSpeed = 0.8,
+    pulseAmount = 0.15,
+    centerFadeRadius = 1.5
 }: TunnelParticlesProps) {
     // Reveal animation state
     const revealStartTime = useRef<number | null>(null);
@@ -143,6 +153,12 @@ export function TunnelParticles({
         renderMaterial.uniforms.uOpacity.value = opacity;
         renderMaterial.uniforms.uRevealFactor.value = revealFactor;
         renderMaterial.uniforms.uRevealProgress.value = easedProgress;
+        renderMaterial.uniforms.uCenterFadeRadius.value = centerFadeRadius;
+
+        // Update vortex simulation uniforms
+        simulationMaterial.uniforms.uSpiralStrength.value = spiralStrength;
+        simulationMaterial.uniforms.uPulseSpeed.value = pulseSpeed;
+        simulationMaterial.uniforms.uPulseAmount.value = pulseAmount;
     })
 
     return (

@@ -39,6 +39,11 @@ export default function TunnelBackground() {
         vignetteOffset: 0.4,
         useManualTime: false,
         manualTime: 0,
+        // Vortex effect parameters
+        spiralStrength: 0.5,
+        pulseSpeed: 0.8,
+        pulseAmount: 0.15,
+        centerFadeRadius: 1.5,
         // showDebugPlane: false
     }
 
@@ -68,6 +73,10 @@ export default function TunnelBackground() {
                     planeScale={defaults.planeScale}
                     useManualTime={defaults.useManualTime}
                     manualTime={defaults.manualTime}
+                    spiralStrength={defaults.spiralStrength}
+                    pulseSpeed={defaults.pulseSpeed}
+                    pulseAmount={defaults.pulseAmount}
+                    centerFadeRadius={defaults.centerFadeRadius}
                     // introspect prop from Skkall is usually controlled by hover state, we can default to false or pass it if needed
                     introspect={false}
                 />

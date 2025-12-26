@@ -37,6 +37,7 @@ export class TunnelPointMaterial extends THREE.ShaderMaterial {
       varying vec3 vWorldPosition;
       varying vec3 vInitialPosition;
       uniform float uTransition;
+      uniform float uCenterFadeRadius;
 
       ${periodicNoiseGLSL}
 
@@ -113,7 +114,11 @@ export class TunnelPointMaterial extends THREE.ShaderMaterial {
         // Calculate sparkle brightness multiplier
         float sparkleBrightness = sparkleNoise(vInitialPosition, uTime);
         
-        float alpha = (1.04 - clamp(vDistance, 0.0, 1.0)) * clamp(smoothstep(-0.5, 0.25, vPosY), 0.0, 1.0) * uOpacity * revealMask * uRevealProgress * sparkleBrightness;
+        // Calculate fade based on distance from center (singularity effect)
+        float distFromCenter = length(vWorldPosition.xz);
+        float centerFade = smoothstep(0.0, uCenterFadeRadius, distFromCenter);
+        
+        float alpha = (1.04 - clamp(vDistance, 0.0, 1.0)) * clamp(smoothstep(-0.5, 0.25, vPosY), 0.0, 1.0) * uOpacity * revealMask * uRevealProgress * sparkleBrightness * centerFade;
 
         // Accent colors for gradient
         vec3 purpleNavy = vec3(0.306, 0.318, 0.502);    // #4E5180
@@ -144,7 +149,8 @@ export class TunnelPointMaterial extends THREE.ShaderMaterial {
         uPointSize: { value: 2.0 },
         uOpacity: { value: 1.0 },
         uRevealFactor: { value: 0.0 },
-        uRevealProgress: { value: 0.0 }
+        uRevealProgress: { value: 0.0 },
+        uCenterFadeRadius: { value: 1.5 }
       },
       transparent: true,
       // blending: THREE.AdditiveBlending,
