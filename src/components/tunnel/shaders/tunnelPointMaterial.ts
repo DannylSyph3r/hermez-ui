@@ -115,7 +115,23 @@ export class TunnelPointMaterial extends THREE.ShaderMaterial {
         
         float alpha = (1.04 - clamp(vDistance, 0.0, 1.0)) * clamp(smoothstep(-0.5, 0.25, vPosY), 0.0, 1.0) * uOpacity * revealMask * uRevealProgress * sparkleBrightness;
 
-        gl_FragColor = vec4(vec3(1.0), mix(alpha, sparkleBrightness - 1.1, uTransition));
+        // Accent colors for gradient
+        vec3 purpleNavy = vec3(0.306, 0.318, 0.502);    // #4E5180
+        vec3 amaranthPurple = vec3(0.624, 0.169, 0.408); // #9F2B68
+        vec3 palatinatePurple = vec3(0.420, 0.176, 0.373); // #6B2D5F
+        
+        // Create moving gradient based on time and position
+        float gradientPhase = sin(uTime * 0.3 + vInitialPosition.x * 2.0 + vInitialPosition.z * 2.0) * 0.5 + 0.5;
+        float gradientPhase2 = sin(uTime * 0.2 + vInitialPosition.y * 3.0) * 0.5 + 0.5;
+        
+        // Blend between colors
+        vec3 color1 = mix(purpleNavy, amaranthPurple, gradientPhase);
+        vec3 particleColor = mix(color1, palatinatePurple, gradientPhase2);
+        
+        // Brighten the color slightly for visibility
+        particleColor = particleColor * 1.5 + 0.2;
+
+        gl_FragColor = vec4(particleColor, mix(alpha, sparkleBrightness - 1.1, uTransition));
       }`,
       uniforms: {
         positions: { value: null },
