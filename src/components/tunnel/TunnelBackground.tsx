@@ -35,8 +35,8 @@ export default function TunnelBackground() {
         pointSize: 10.0,
         opacity: 0.8,
         planeScale: 10.0,
-        vignetteDarkness: 1.5,
-        vignetteOffset: 0.4,
+        vignetteDarkness: 1.0,
+        vignetteOffset: 0.7,
         useManualTime: false,
         manualTime: 0,
         // Vortex effect parameters

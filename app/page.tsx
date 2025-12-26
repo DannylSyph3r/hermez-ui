@@ -56,7 +56,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
 
   return (
-    <div className="relative h-screen flex flex-col overflow-hidden font-[family-name:var(--font-geist-sans)] text-white">
+    <div className="relative min-h-screen min-w-[900px] flex flex-col overflow-auto font-[family-name:var(--font-geist-sans)] text-white">
       {/* Background (Z-0) */}
       <TunnelBackground />
 
@@ -85,7 +85,7 @@ export default function Home() {
           </p>
 
           {/* Main Headline - Larger with Serif/Sans Mix */}
-          <h2 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-white mb-4 leading-[1.1]">
+          <h2 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-white mb-4 leading-[1.1] whitespace-nowrap">
             Bridge worlds at{" "}
             <span className="font-[family-name:var(--font-playfair)] italic">
               divine speed
@@ -140,7 +140,7 @@ export default function Home() {
 
       {/* Footer (Z-10) */}
       <footer className="relative z-10 py-4 px-6 text-center">
-        <p className="text-white/30 text-xs font-light italic mb-1">
+        <p className="text-white/30 text-xs font-light italic mb-3">
           Named after Hermes, the messenger of the gods.
         </p>
         <p className="text-white/20 text-[10px] font-[family-name:var(--font-geist-mono)]">
