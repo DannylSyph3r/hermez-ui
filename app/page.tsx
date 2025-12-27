@@ -62,9 +62,16 @@ export default function Home() {
 
       {/* Header (Z-20) */}
       <header className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between p-6">
-        <h1 className="text-xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50">
-          hermez.
-        </h1>
+        <div className="flex items-center gap-0">
+          <img
+            src="/hermez-logo.png"
+            alt="Hermez Logo"
+            className="h-12 w-auto"
+          />
+          <h1 className="text-xl font-bold tracking-tighter bg-clip-text text-transparent bg-gradient-to-b from-white to-white/50">
+            hermez.
+          </h1>
+        </div>
         <a
           href="https://github.com/hermez"
           target="_blank"
