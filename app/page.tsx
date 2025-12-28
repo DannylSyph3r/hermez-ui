@@ -73,7 +73,7 @@ export default function Home() {
           </h1>
         </div>
         <a
-          href="https://github.com/hermez"
+          href="https://github.com/DannylSyph3r/hermez"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-sm text-white/90 text-xs font-light hover:bg-white/15 hover:border-[#9F2B68]/60 transition-all duration-300"
@@ -100,13 +100,13 @@ export default function Home() {
           </h2>
 
           {/* Subheadline */}
-          <p className="text-white/50 text-base md:text-lg font-light max-w-2xl mx-auto leading-relaxed mb-10">
+          <p className="text-white/50 text-base md:text-lg font-light max-w-2xl mx-auto leading-relaxed mb-6">
             An open-source ngrok alternative built for developers who need fast, reliable tunnels.
             Share your local server with anyone, anywhere.
           </p>
 
           {/* Waitlist Field and Button */}
-          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto mb-8">
+          <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto mb-6">
             <input
               type="email"
               placeholder="Enter your email"
@@ -120,7 +120,7 @@ export default function Home() {
           </div>
 
           {/* Mock Command*/}
-          <code className="inline-block px-4 py-2 rounded-lg bg-white/5 border border-white/10 font-[family-name:var(--font-geist-mono)] text-sm mb-20">
+          <code className="inline-block px-4 py-2 rounded-lg bg-white/5 border border-white/10 font-[family-name:var(--font-geist-mono)] text-sm mb-6">
             <span className="text-[#9F2B68] font-bold">hermez</span>{" "}
             <span className="text-white/50">http 3000</span>
           </code>
@@ -146,8 +146,8 @@ export default function Home() {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 py-4 px-6 text-center">
-        <p className="text-white/30 text-xs font-light italic mb-3">
+      <footer className="relative z-10 py-1 pb-4 px-6 text-center">
+        <p className="text-white/30 text-xs font-light italic mb-1">
           As above, so below. As local, so global
         </p>
         <p className="text-white/20 text-[10px] font-[family-name:var(--font-geist-mono)]">
