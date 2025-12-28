@@ -6,24 +6,17 @@ import { Effects } from '@react-three/drei'
 import { ShaderPass } from 'three-stdlib'
 import { TunnelParticles } from './TunnelParticles'
 import { VignetteShader } from './shaders/vignetteShader'
-
-// Extend ShaderPass to make it available as JSX
 extend({ ShaderPass })
 
-// Add types for shaderPass
-// eslint-disable-next-line @typescript-eslint/no-namespace
 declare global {
-    // eslint-disable-next-line @typescript-eslint/no-namespace
     namespace JSX {
         interface IntrinsicElements {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             shaderPass: any
         }
     }
 }
 
 export default function TunnelBackground() {
-    // Hardcoded values from Skkall defaults (since we don't need Leva for end user yet)
     const defaults = {
         speed: 1.0,
         focus: 3.8,
@@ -77,7 +70,6 @@ export default function TunnelBackground() {
                     pulseSpeed={defaults.pulseSpeed}
                     pulseAmount={defaults.pulseAmount}
                     centerFadeRadius={defaults.centerFadeRadius}
-                    // introspect prop from Skkall is usually controlled by hover state, we can default to false or pass it if needed
                     introspect={false}
                 />
 

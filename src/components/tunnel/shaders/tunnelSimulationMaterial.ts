@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { periodicNoiseGLSL } from './utils'
 
-// Function to generate equally distributed points on a plane
+// Generate equally distributed points on a plane
 function getPlane(count: number, components: number, size: number = 512, scale: number = 1.0) {
   const length = count * components
   const data = new Float32Array(length)

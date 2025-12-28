@@ -9,7 +9,6 @@ import * as easing from 'maath/easing'
 import { TunnelPointMaterial } from './shaders/tunnelPointMaterial'
 import { TunnelSimulationMaterial } from './shaders/tunnelSimulationMaterial'
 
-// Extend materials to make them available as JSX elements if needed
 extend({ TunnelSimulationMaterial, TunnelPointMaterial })
 
 interface TunnelParticlesProps {
@@ -34,7 +33,6 @@ interface TunnelParticlesProps {
 }
 
 export function TunnelParticles({
-    // Skkall Defaults from index.tsx
     speed = 1.0,
     aperture = 1.79,
     focus = 3.8,
@@ -59,7 +57,7 @@ export function TunnelParticles({
     const [isRevealing, setIsRevealing] = useState(true);
     const revealDuration = 3.5; // seconds
 
-    // 1. Setup Simulation Material (Exact Skkall Logic)
+    // 1. Setup Simulation Material
     const simulationMaterial = useMemo(() => {
         return new TunnelSimulationMaterial(planeScale)
     }, [planeScale])
@@ -126,7 +124,7 @@ export function TunnelParticles({
 
         // Map progress to reveal factor (0 = fully hidden, higher values = more revealed)
         // We want to start from center (0) and expand outward (higher values)
-        const revealFactor = easedProgress * 4.0; // Doubled the radius for larger coverage
+        const revealFactor = easedProgress * 4.0;
 
         if (revealProgress >= 1.0 && isRevealing) {
             setIsRevealing(false);

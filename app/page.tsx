@@ -57,10 +57,10 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen min-w-[900px] flex flex-col overflow-auto font-[family-name:var(--font-geist-sans)] text-white">
-      {/* Background (Z-0) */}
+      {/* Black Hole Background */}
       <TunnelBackground />
 
-      {/* Header (Z-20) */}
+      {/* Page Header */}
       <header className="fixed top-0 left-0 right-0 z-20 flex items-center justify-between p-6">
         <div className="flex items-center gap-0">
           <img
@@ -83,15 +83,15 @@ export default function Home() {
         </a>
       </header>
 
-      {/* Main Content (Z-10) */}
+      {/* Main Body*/}
       <main className="relative z-10 flex-1 flex flex-col justify-center items-center px-6 pt-16">
         <div className="max-w-4xl w-full text-center">
-          {/* Tagline - Larger */}
+          {/* Tagline */}
           <p className="text-base md:text-lg text-white/40 font-[family-name:var(--font-geist-mono)] font-light tracking-widest uppercase mb-3">
             Tunneling to the future
           </p>
 
-          {/* Main Headline - Larger with Serif/Sans Mix */}
+          {/* Main Headline */}
           <h2 className="text-5xl md:text-6xl lg:text-7xl font-light tracking-tight text-white mb-4 leading-[1.1] whitespace-nowrap">
             Bridge worlds at{" "}
             <span className="font-[family-name:var(--font-playfair)] italic">
@@ -99,13 +99,13 @@ export default function Home() {
             </span>
           </h2>
 
-          {/* Subheadline - Larger */}
+          {/* Subheadline */}
           <p className="text-white/50 text-base md:text-lg font-light max-w-2xl mx-auto leading-relaxed mb-10">
             An open-source ngrok alternative built for developers who need fast, reliable tunnels.
             Share your local server with anyone, anywhere.
           </p>
 
-          {/* Waitlist Form */}
+          {/* Waitlist Field and Button */}
           <div className="flex flex-col sm:flex-row gap-3 w-full max-w-md mx-auto mb-8">
             <input
               type="email"
@@ -119,13 +119,13 @@ export default function Home() {
             </button>
           </div>
 
-          {/* Code Example - Above Features */}
+          {/* Mock Command*/}
           <code className="inline-block px-4 py-2 rounded-lg bg-white/5 border border-white/10 font-[family-name:var(--font-geist-mono)] text-sm mb-20">
             <span className="text-[#9F2B68] font-bold">hermez</span>{" "}
             <span className="text-white/50">http 3000</span>
           </code>
 
-          {/* Features Strip - With Descriptions */}
+          {/* Features Strip */}
           <div className="flex flex-wrap justify-center items-start gap-x-8 gap-y-3">
             {features.map((feature, index) => (
               <div
@@ -145,10 +145,10 @@ export default function Home() {
         </div>
       </main>
 
-      {/* Footer (Z-10) */}
+      {/* Footer */}
       <footer className="relative z-10 py-4 px-6 text-center">
         <p className="text-white/30 text-xs font-light italic mb-3">
-          Named after Hermes, the messenger of the gods.
+          As above, so below. As local, so global
         </p>
         <p className="text-white/20 text-[10px] font-[family-name:var(--font-geist-mono)]">
           © 2025 Hermez Inc.
