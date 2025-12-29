@@ -1,22 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Hermez Color Scheme */
+  --hermez-primary: #9f2b68; /* Amaranth Deep Purple - Brand/Primary */
+  --hermez-secondary: #4e5180; /* Purple Navy - Accent/Secondary */
+  --hermez-accent: #6b2d5f; /* Palatinate Purple - Darker Accent */
+
+  /* Semantic Colors */
+  --hermez-success: #4e5180; /* Using secondary for success */
+  --hermez-error: #9f2b68; /* Using primary for error */
+
+  /* Base Colors */
+  --background: #0a0a0a;
+  --foreground: #ededed;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--hermez-primary);
+  --color-secondary: var(--hermez-secondary);
+  --color-accent: var(--hermez-accent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
 }
 
 body {
