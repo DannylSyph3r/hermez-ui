@@ -16,9 +16,7 @@ export interface ApiResponse<T> {
   data: T;
 }
 
-export async function subscribeToWaitlist(
-  email: string
-): Promise<ApiResponse<WaitlistResponse>> {
+export async function subscribeToWaitlist(email: string): Promise<ApiResponse<WaitlistResponse>> {
   const response = await apiClient.post<ApiResponse<WaitlistResponse>>(
     "/api/v1/waitlist/subscribe",
     { email }
