@@ -36,7 +36,7 @@ export default function TunnelBackground() {
         speed: 1.0,
         focus: 3.8,
         aperture: 1.79,
-        size: 512,
+        size: isMobile ? 256 : 512,
         noiseScale: 0.6,
         noiseIntensity: 0.52,
         timeScale: 1.0,
@@ -73,7 +73,12 @@ export default function TunnelBackground() {
     return (
         <div className="absolute inset-0 z-0 bg-black">
             <Canvas
-                gl={{ preserveDrawingBuffer: true }}
+                gl={{ 
+                    preserveDrawingBuffer: true,
+                    powerPreference: 'high-performance',
+                    antialias: !isMobile
+                }}
+                dpr={isMobile ? [1, 1.5] : [1, 2]}
                 camera={cameraConfig}
             >
                 <color attach="background" args={["#000"]} />
