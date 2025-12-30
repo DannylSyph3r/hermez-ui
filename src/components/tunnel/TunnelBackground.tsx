@@ -43,8 +43,8 @@ export default function TunnelBackground() {
         pointSize: isMobile ? 12.0 : 10.0,
         opacity: 0.8,
         planeScale: isMobile ? 12.0 : 10.0,
-        vignetteDarkness: 1.0,
-        vignetteOffset: 0.7,
+        vignetteDarkness: isMobile ? 0.6 : 1.0,
+        vignetteOffset: isMobile ? 1.0 : 0.7,
         useManualTime: false,
         manualTime: 0,
         // Vortex effect parameters
