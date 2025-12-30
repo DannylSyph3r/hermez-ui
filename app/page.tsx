@@ -135,46 +135,28 @@ export default function Home() {
           </code>
 
           {/* Features Strip - Infinite marquee on mobile, static on desktop */}
-          <div className="w-full md:w-auto overflow-hidden md:overflow-visible pb-2 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0 mt-2 md:mt-0">
-            {/* Mobile: Infinite scrolling */}
-            <div className="md:hidden">
-              <div className="flex animate-marquee gap-x-8">
-                {/* First set of features */}
+          <div className="w-full md:w-auto pb-2 md:pb-0 mt-2 md:mt-0 overflow-hidden md:overflow-visible">
+            {/* Mobile: Infinite horizontal scroll */}
+            <div className="md:hidden px-4">
+              <div className="marquee-track gap-x-8">
+                {/* First set */}
                 {features.map((feature, index) => (
-                  <div
-                    key={`first-${index}`}
-                    className="flex items-center gap-2 group flex-shrink-0"
-                  >
-                    <span className="text-[#6B2D5F] group-hover:text-[#9F2B68] transition-colors">
+                  <div key={`a-${index}`} className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-[#6B2D5F]">
                       <feature.icon className="w-4 h-4" />
                     </span>
-                    <div className="text-left whitespace-nowrap">
-                      <span className="text-white/80 text-[10px] font-medium">
-                        {feature.title}
-                      </span>
-                      <span className="text-white/40 text-[10px] font-light ml-1">
-                        {feature.desc}
-                      </span>
-                    </div>
+                    <span className="text-white/80 text-[10px] font-medium whitespace-nowrap">{feature.title}</span>
+                    <span className="text-white/40 text-[10px] font-light whitespace-nowrap">{feature.desc}</span>
                   </div>
                 ))}
-                {/* Duplicate set for seamless loop */}
+                {/* Duplicate for seamless loop */}
                 {features.map((feature, index) => (
-                  <div
-                    key={`second-${index}`}
-                    className="flex items-center gap-2 group flex-shrink-0"
-                  >
-                    <span className="text-[#6B2D5F] group-hover:text-[#9F2B68] transition-colors">
+                  <div key={`b-${index}`} className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-[#6B2D5F]">
                       <feature.icon className="w-4 h-4" />
                     </span>
-                    <div className="text-left whitespace-nowrap">
-                      <span className="text-white/80 text-[10px] font-medium">
-                        {feature.title}
-                      </span>
-                      <span className="text-white/40 text-[10px] font-light ml-1">
-                        {feature.desc}
-                      </span>
-                    </div>
+                    <span className="text-white/80 text-[10px] font-medium whitespace-nowrap">{feature.title}</span>
+                    <span className="text-white/40 text-[10px] font-light whitespace-nowrap">{feature.desc}</span>
                   </div>
                 ))}
               </div>
@@ -182,20 +164,13 @@ export default function Home() {
             {/* Desktop: Static wrapped layout */}
             <div className="hidden md:flex md:flex-wrap md:justify-center items-start gap-x-8 gap-y-3">
               {features.map((feature, index) => (
-                <div
-                  key={index}
-                  className="flex items-center gap-2 group"
-                >
+                <div key={index} className="flex items-center gap-2 group">
                   <span className="text-[#6B2D5F] group-hover:text-[#9F2B68] transition-colors">
                     <feature.icon className="w-6 h-6" />
                   </span>
                   <div className="text-left">
-                    <span className="text-white/80 text-xs font-medium">
-                      {feature.title}
-                    </span>
-                    <span className="text-white/40 text-xs font-light ml-1">
-                      {feature.desc}
-                    </span>
+                    <span className="text-white/80 text-xs font-medium">{feature.title}</span>
+                    <span className="text-white/40 text-xs font-light ml-1">{feature.desc}</span>
                   </div>
                 </div>
               ))}
