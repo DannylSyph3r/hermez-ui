@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Canvas, extend } from '@react-three/fiber'
 import { Effects } from '@react-three/drei'
 import { ShaderPass } from 'three-stdlib'
@@ -17,6 +17,21 @@ declare global {
 }
 
 export default function TunnelBackground() {
+    const [isMobile, setIsMobile] = useState(false)
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768)
+        }
+        
+        // Check on mount
+        checkMobile()
+        
+        // Listen for resize
+        window.addEventListener('resize', checkMobile)
+        return () => window.removeEventListener('resize', checkMobile)
+    }, [])
+
     const defaults = {
         speed: 1.0,
         focus: 3.8,
@@ -25,9 +40,9 @@ export default function TunnelBackground() {
         noiseScale: 0.6,
         noiseIntensity: 0.52,
         timeScale: 1.0,
-        pointSize: 10.0,
+        pointSize: isMobile ? 12.0 : 10.0,
         opacity: 0.8,
-        planeScale: 10.0,
+        planeScale: isMobile ? 12.0 : 10.0,
         vignetteDarkness: 1.0,
         vignetteOffset: 0.7,
         useManualTime: false,
@@ -40,16 +55,26 @@ export default function TunnelBackground() {
         // showDebugPlane: false
     }
 
+    // Camera adjustments for mobile - wider FOV and pulled back for better centering
+    const cameraConfig = isMobile
+        ? {
+            position: [0.8, 2.2, -2.5] as [number, number, number],
+            fov: 65,
+            near: 0.01,
+            far: 300,
+        }
+        : {
+            position: [1.2629783123314589, 2.664606471394044, -1.8178993743288914] as [number, number, number],
+            fov: 50,
+            near: 0.01,
+            far: 300,
+        }
+
     return (
         <div className="absolute inset-0 z-0 bg-black">
             <Canvas
                 gl={{ preserveDrawingBuffer: true }}
-                camera={{
-                    position: [1.2629783123314589, 2.664606471394044, -1.8178993743288914],
-                    fov: 50,
-                    near: 0.01,
-                    far: 300,
-                }}
+                camera={cameraConfig}
             >
                 <color attach="background" args={["#000"]} />
 
