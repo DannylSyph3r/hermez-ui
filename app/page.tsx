@@ -129,13 +129,13 @@ export default function Home() {
           </div>
 
           {/* Mock Command*/}
-          <code className="inline-block px-3 md:px-4 py-1.5 md:py-2 rounded-lg bg-white/5 border border-white/10 font-[family-name:var(--font-geist-mono)] text-xs md:text-sm mb-4 md:mb-6">
+          <code className="inline-block px-3 md:px-4 py-1.5 md:py-2 rounded-lg bg-white/5 border border-white/10 font-[family-name:var(--font-geist-mono)] text-xs md:text-sm mt-4 mb-6 md:mt-0 md:mb-6">
             <span className="text-[#9F2B68] font-bold">hermez</span>{" "}
             <span className="text-white/50">http 3000</span>
           </code>
 
           {/* Features Strip - Infinite marquee on mobile, static on desktop */}
-          <div className="w-full md:w-auto overflow-hidden md:overflow-visible pb-2 md:pb-0">
+          <div className="w-full md:w-auto overflow-hidden md:overflow-visible pb-2 md:pb-0 -mx-6 px-6 md:mx-0 md:px-0 mt-2 md:mt-0">
             {/* Mobile: Infinite scrolling */}
             <div className="md:hidden">
               <div className="flex animate-marquee gap-x-8">
