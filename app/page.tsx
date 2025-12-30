@@ -32,14 +32,12 @@ export default function Home() {
 
     setIsSubmitting(true);
 
-    // Track start time for minimum delay
     const startTime = Date.now();
     const MIN_DELAY_MS = 1500;
 
     try {
       const response = await subscribeToWaitlist(email);
 
-      // Ensure minimum delay for visual feedback
       const elapsed = Date.now() - startTime;
       if (elapsed < MIN_DELAY_MS) {
         await new Promise((resolve) => setTimeout(resolve, MIN_DELAY_MS - elapsed));
@@ -52,7 +50,6 @@ export default function Home() {
         toast.error(response.message || "Failed to join waitlist");
       }
     } catch (error: any) {
-      // Ensure minimum delay even on error
       const elapsed = Date.now() - startTime;
       if (elapsed < MIN_DELAY_MS) {
         await new Promise((resolve) => setTimeout(resolve, MIN_DELAY_MS - elapsed));
@@ -139,7 +136,7 @@ export default function Home() {
 
           {/* Features Strip - Infinite marquee on mobile, static on desktop */}
           <div className="w-full md:w-auto overflow-hidden md:overflow-visible pb-2 md:pb-0">
-            {/* Mobile: Infinite scrolling marquee */}
+            {/* Mobile: Infinite scrolling */}
             <div className="md:hidden">
               <div className="flex animate-marquee gap-x-8">
                 {/* First set of features */}
